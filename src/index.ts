@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import movieRoutes from "./routes/movieRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
 import watchlistRoutes from "./routes/watchlistRoutes.js"
+import { errorMiddleware } from './middleware/errorMiddleware.js';
 
 dotenv.config();
 await connectDB();
@@ -28,7 +29,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json({message: 'Konnichiwa from my backend server'});
 });
 
-
 // Start the Server
 const port = process.env.PORT || 5001;
 const server = app.listen(port, () => {
@@ -36,4 +36,5 @@ const server = app.listen(port, () => {
 });
 
 // Global Error Handling
+app.use(errorMiddleware);
 setupGracefulShutdown(server);

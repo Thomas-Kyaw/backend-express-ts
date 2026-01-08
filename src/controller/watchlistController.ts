@@ -55,20 +55,16 @@ const removeMovieFromWatchList = async (req: Request, res: Response) => {
         return res.status(401).json({ error: "User not authenticated" });
     }
 
-    try {
-        await prisma.watchlistItem.delete({
-            where: {
-                userId_movieId: {
-                    userId: req.user.id,
-                    movieId: movieId
-                }
+    await prisma.watchlistItem.delete({
+        where: {
+            userId_movieId: {
+                userId: req.user.id,
+                movieId: movieId
             }
-        });
+        }
+    });
 
-        res.status(200).json({ message: "Movie removed from watchlist" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to remove movie from watchlist" });
-    }
+    res.status(200).json({ message: "Movie removed from watchlist" });
 }
 
 const updateWatchlistItem = async (req: Request, res: Response) => {
@@ -83,25 +79,21 @@ const updateWatchlistItem = async (req: Request, res: Response) => {
         return res.status(401).json({ error: "User not authenticated" });
     }
 
-    try {
-        const watchlistItem = await prisma.watchlistItem.update({
-            where: {
-                userId_movieId: {
-                    userId: req.user.id,
-                    movieId: movieId
-                }
-            },
-            data: {
-                status,
-                rating,
-                notes
+    const watchlistItem = await prisma.watchlistItem.update({
+        where: {
+            userId_movieId: {
+                userId: req.user.id,
+                movieId: movieId
             }
-        });
+        },
+        data: {
+            status,
+            rating,
+            notes
+        }
+    });
 
-        res.status(200).json({ data: { watchlistItem } });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to update watchlist item" });
-    }
+    res.status(200).json({ data: { watchlistItem } });
 }
 
 export { addToWatchList, removeMovieFromWatchList, updateWatchlistItem }

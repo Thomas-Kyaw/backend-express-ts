@@ -1,7 +1,7 @@
 import z from 'zod'
 
 const addToWatchListSchema = z.object({
-    movieId: z.uuid(),
+    movieId: z.string({ message: "Movie ID is required" }).uuid(),
     status: z.enum([
         "PLANNED",
         "WATCHING",
@@ -19,4 +19,22 @@ const addToWatchListSchema = z.object({
     notes: z.string().optional(),
 })
 
-export {addToWatchListSchema}
+export const updateWatchListSchema = z.object({
+    status: z.enum([
+        "PLANNED",
+        "WATCHING",
+        "COMPLETED",
+        "DROPPED"
+    ], {
+        error: "Status must be one of: PLANNED, WATCHING, COMPLETED, DROPPED"
+    }).optional(),
+    rating: z.coerce
+            .number()
+            .int("Rating must be an integer")
+            .min(1, "Rating must be between 1 and 10")
+            .max(10, "Rating must be between 1 and 10")
+            .optional(),
+    notes: z.string().optional(),
+});
+
+export { addToWatchListSchema };
