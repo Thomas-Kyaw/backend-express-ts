@@ -50,6 +50,13 @@ async function verifyWatchlistRemoval() {
   -H "Cookie: jwt=${token}" \\
   -d '{"status": "WATCHING", "rating": 5, "notes": "Great movie!"}'`);
 
+    console.log(`\nRun the following curl command to test validation failure (invalid status):\n`);
+    console.log(`curl -X PUT http://localhost:5001/watchlist/movie/${movie.id} \\
+  -H "Content-Type: application/json" \\
+  -H "Cookie: jwt=${token}" \\
+  -d '{"status": "INVALID_STATUS"}'`);
+    console.log(`\nExpected response: {"errors": ["Status must be one of: ..."]}`);
+
   } catch (error) {
     console.error("Error:", error);
   } finally {
