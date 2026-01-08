@@ -1,0 +1,60 @@
+
+import { prisma } from "./src/config/db.js";
+import { generateToken } from "./src/utils/generateTokenHelper.js";
+
+async function verifyWatchlistRemoval() {
+  try {
+    // 1. Create a test user
+    const user = await prisma.user.create({
+      data: {
+        email: `test-${Date.now()}@example.com`,
+        password: "password123",
+        name: "Test User",
+      },
+    });
+
+    // 2. Create a test movie
+    const movie = await prisma.movie.create({
+      data: {
+        title: "Test Movie",
+        releaseYear: 2023,
+        createdBy: user.id,
+      },
+    });
+
+    // 3. Add to watchlist
+    await prisma.watchlistItem.create({
+      data: {
+        userId: user.id,
+        movieId: movie.id,
+      },
+    });
+
+    console.log("Setup complete: User and Movie created, added to watchlist.");
+
+    // 4. Generate token
+    const token = generateToken(user.id, res as any); // Mocking res
+
+    // Note: Since we can't easily mock the full express request/response here without a lot of boilerplate,
+    // and we want to test the API endpoint logic, we might be better off using `curl` or `fetch` against the running server.
+    // However, the server might not be running.
+    // Let's rely on the user to run the server and use curl.
+
+    console.log(`\nRun the following curl command to test removal:\n`);
+    console.log(`curl -X DELETE http://localhost:5001/watchlist/movie/${movie.id} \\
+  -H "Cookie: jwt=${token}"`);
+
+    console.log(`\nRun the following curl command to test update:\n`);
+    console.log(`curl -X PUT http://localhost:5001/watchlist/movie/${movie.id} \\
+  -H "Content-Type: application/json" \\
+  -H "Cookie: jwt=${token}" \\
+  -d '{"status": "WATCHING", "rating": 5, "notes": "Great movie!"}'`);
+
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// verifyWatchlistRemoval();

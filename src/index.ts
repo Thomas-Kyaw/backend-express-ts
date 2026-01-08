@@ -2,6 +2,7 @@ import express, { type Request, type Response } from 'express';
 import { connectDB, disconnectDB } from './config/db.js';
 import { setupGracefulShutdown } from './utils/shutdown.js';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
 // Import Routes
 import movieRoutes from "./routes/movieRoutes.js"
@@ -15,6 +16,7 @@ const app = express();
 
 // Body Parsing Middlewares
 app.use(express.json())
+app.use(cookieParser())
 // app.use(express.urlencoded({ extended: true }))
 
 // API Routes

@@ -44,5 +44,64 @@ const addToWatchList = async (req: Request, res: Response) => {
     })
 }
 
+const removeMovieFromWatchList = async (req: Request, res: Response) => {
+    const { movieId } = req.params;
 
-export { addToWatchList }
+    if (!movieId) {
+        return res.status(400).json({ error: "Movie ID is required" });
+    }
+
+    if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    try {
+        await prisma.watchlistItem.delete({
+            where: {
+                userId_movieId: {
+                    userId: req.user.id,
+                    movieId: movieId
+                }
+            }
+        });
+
+        res.status(200).json({ message: "Movie removed from watchlist" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to remove movie from watchlist" });
+    }
+}
+
+const updateWatchlistItem = async (req: Request, res: Response) => {
+    const { movieId } = req.params;
+    const { status, rating, notes } = req.body;
+
+    if (!movieId) {
+        return res.status(400).json({ error: "Movie ID is required" });
+    }
+
+    if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    try {
+        const watchlistItem = await prisma.watchlistItem.update({
+            where: {
+                userId_movieId: {
+                    userId: req.user.id,
+                    movieId: movieId
+                }
+            },
+            data: {
+                status,
+                rating,
+                notes
+            }
+        });
+
+        res.status(200).json({ data: { watchlistItem } });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update watchlist item" });
+    }
+}
+
+export { addToWatchList, removeMovieFromWatchList, updateWatchlistItem }
