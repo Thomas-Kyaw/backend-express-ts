@@ -1,3 +1,19 @@
-.env
-.vscode
+# Dependencies
+node_modules
 .node_modules
+
+# Environment
+.env
+
+# Production
+dist/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
